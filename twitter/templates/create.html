@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Create</h2>
+<div class="container">
+<form action="{{ url_for('create') }}" method=post>
+    <dl>
+<div class="row">
+      <div class="col-25">
+      <dt>Parcel Number:</dt>
+        </div>
+   <div class="col-75">
+      <dd><input type="text" name="parcelnumber" required></dd>
+   </div>
+</div>
+
+
+      <div class="row">
+      <div class="col-25">
+      <dt>Sender Name:</dt>
+        </div>
+        <div class="col-75">
+      <dd><input type="text" name="sendername" required></dd>
+ </div>
+</div>
+         <div class="row">
+      <div class="col-25">
+      <dt>Sender Mobile Number:</dt>
+        </div>
+           <div class="col-75">
+      <dd><input type="text" name="sendermobilenumber" required>
+      </dd>
+ </div>
+</div>
+
+         <div class="row">
+      <div class="col-25">
+      <dt>Sender Address:</dt>
+        </div>
+           <div class="col-75">
+      <dd><textarea name="senderaddress" required></textarea></dd>
+ </div>
+</div>
+
+         <div class="row">
+      <div class="col-25">
+      <dt>Receiver Name:</dt>
+        </div>
+           <div class="col-75">
+      <dd><input type="text" name="receivername" required></dd>
+ </div>
+</div>
+
+         <div class="row">
+      <div class="col-25">
+      <dt>Receiver Mobile Number:</dt>
+        </div>
+           <div class="col-75">
+      <dd><input type="text" name="receivermobilenumber" required>
+      </dd>
+ </div>
+</div>
+
+         <div class="row">
+      <div class="col-25">
+      <dt>Receiver Address:</dt>
+        </div>
+           <div class="col-75">
+      <dd><textarea name="receiveraddress" required></textarea></dd>
+ </div>
+</div>
+
+
+         <div class="row">
+      <div class="col-25">
+       <dt>Destination Branch:</dt>
+        </div>
+           <div class="col-75">
+      <dd>
+        <select id="destination_branch" name="destination_branch">
+
+       <option value=1>Saddar Branch Rawalpindi</option>
+       <option value=2>Blue Area Branch Islamabad</option>
+       <option value=3>Nazimabad Branch Karachi </option>
+       <option value=4>City Branch Jhelum</option>
+       <option value=5>Cantt Branch Multan</option>
+      </select>
+      </dd>
+ </div>
+</div>
+
+         <div class="row">
+      <div class="col-25">
+      <dt>Parcel weight:</dt>
+</div>
+           <div class="col-75">
+      <dd><input type="number" name="parcelweight" required  min="0" value="0" step="any">
+ </div>
+</div>
+
+         <div class="row">
+      <div class="col-25">
+      <dt>Amount:</dt>
+</div>
+           <div class="col-75">
+      <dd><input type="number" name="amount" required  min="0" value="0" step="any">
+ </div>
+</div>
+
+      <dd><input type="submit" value="Create" /></dd>
+    </dl>
+  </form>
+</div>
+{% endblock %}

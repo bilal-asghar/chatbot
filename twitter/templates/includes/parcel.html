@@ -1,0 +1,25 @@
+
+
+<tr>
+
+ <td class="parcel-content">{{ parcel.parcelnumber }}</td>
+ <td class="parcel-content">{{ parcel.sendername }}</td>
+ <td class="parcel-content">{{ parcel.sendermobilenumber }}</td>
+ <td class="parcel-content">{{ parcel.senderaddress }}</td>
+ <td class="parcel-content">{{ parcel.receivername }}</td>
+ <td class="parcel-content">{{ parcel.receivermobilenumber }}</td>
+
+ <td class="parcel-content">{{ parcel.receiveraddress }}</td>
+
+ <td class="parcel-content">{{ parcel.pub_date|urlize }}</td>
+<td class="parcel-content">{{ parcel.amount }}</td>
+  <td class="parcel-content">
+    <a class="avatar" href="{{ url_for('editparcel' , id=parcel.id) }}">
+    Edit
+    </a>
+
+  </td>
+
+</tr>
+
+

@@ -1,0 +1,66 @@
+<doctype html>
+<title>Update Parcel</title>
+<h2>Edit  Parcel</h2>
+    <style>
+        label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+
+
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+   float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+
+input[type=number], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+   float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+    </style>
+<div class="container">
+{% from "_formhelpers.html" import render_field %}
+
+    <form method=post>
+        <dl>
+<div class="row">
+            {{ render_field(form.sendername) }}
+</div>
+          <div class="row">  {{ render_field(form.sendermobilenumber) }}
+          </div>
+        <div class="row">    {{ render_field(form.senderaddress) }}  </div>
+        <div class="row">    {{ render_field(form.receivername) }}  </div>
+        <div class="row">    {{ render_field(form.receivermobilenumber) }}  </div>
+
+         <div class="row">   {{ render_field(form.receiveraddress) }}  </div>
+         <div class="row">   {{ render_field(form.parcelweight) }}  </div>
+         <div class="row">   {{ render_field(form.amount) }}  </div>
+          <div class="row">  {{ render_field(form.destination_branch) }}  </div>
+          <div class="row">  {{ render_field(form.is_received_at_destination) }}  </div>
+          <div class="row">  {{ render_field(form.is_delivered_to_receiever) }}  </div>
+        </dl>
+        <p><input type=submit value=Submit>
+    </form>
+</div>

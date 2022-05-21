@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Private Timeline</h2>
+  <ul>
+    {% for parcel in parcel_list %}
+      <li>{% include "includes/parcel.html" %}</li>
+    {% endfor %}
+  </ul>
+  {% include "includes/pagination.html" %}
+{% endblock %}
