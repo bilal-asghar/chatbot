@@ -28,10 +28,10 @@ def bow(sentence, words, show_details=True):
     # tokenize the pattern
     sentence_words = clean_up_sentence(sentence)
     # bag of words - matrix of N words, vocabulary matrix
-    bag = [0]*len(words)  
+    bag = [0]*len(words)
     for s in sentence_words:
         for i,w in enumerate(words):
-            if w == s: 
+            if w == s:
                 # assign 1 if current word is in the vocabulary position
                 bag[i] = 1
                 if show_details:
@@ -115,7 +115,8 @@ def chatbot_response(msg):
         if (msg.isnumeric()):
             session['schedulestep'] = 4
             session['house'] = msg
-            return 'Please enter your house number'
+            session['dates'] = getDeliveryDates()
+            return 'Please select delivery date'
         else:  # validation failed
             return 'Please enter valid office/house number'
 
@@ -154,13 +155,13 @@ def homepage():
     # depending on whether the requesting user is logged in or not, show them
     # either the public timeline or their own private timeline
     if session.get('logged_in'):
-        return "1"
+        return "delivery chatbot"
     else:
-        return "1"
+        return "delivery chatbot"
 
 @chatapp.route('/parcels/<parcelid>/')
 def parcel_detail(parcelid):
-    url = 'http://127.0.0.1:8000/parcels/653212'
+    url = 'http://127.0.0.1:8000/parcels/'+parcelid
     r = requests.get(url)
     print(json.loads(r.content))
     data = json.loads(r.content)
@@ -168,10 +169,13 @@ def parcel_detail(parcelid):
     session['isReceiver'] = True
     session['parcelNumber'] = parcelid
     session['schedulestep'] = 0
-    chatlog = ["your parcel is ready to deliver"]
+    chatlog = ["Bot: your parcel is ready to deliver"]
     session['chatlog'] = chatlog
+    session['schedulestep'] = 1
+    session['chatlog'].append("Bot: you will pickup from branch or you need delivery?")
     print("sender name: ", data['sendername'])
-    return 'order sent by :' + data['sendername']
+    return render_template('chatui.html')
+    #return 'order sent by :' + data['sendername']
 
 
 @chatapp.route('/deliverydetails/', methods=['GET', 'POST'])
@@ -189,8 +193,9 @@ def deliverydetails():
         flash('Parcel delivery info has been updated')
         return render_template('chatui.html')
         #return redirect(url_for('user_detail', username=user.username))
+    else:
 
-    return render_template('chatui.html')
+     return render_template('chatui.html')
 
 
 if __name__ == '__main__':
