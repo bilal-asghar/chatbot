@@ -41,34 +41,7 @@ class User(BaseModel):
     email = CharField()
     join_date = DateTimeField()
 
-    # it often makes sense to put convenience methods on model instances, for
-    # example, "give me all the users this user is following":
-    def following(self):
-        # query other users through the "relationship" table
-        return (User
-                .select()
-                .join(Relationship, on=Relationship.to_user)
-                .where(Relationship.from_user == self)
-                .order_by(User.username))
 
-    def followers(self):
-        return (User
-                .select()
-                .join(Relationship, on=Relationship.from_user)
-                .where(Relationship.to_user == self)
-                .order_by(User.username))
-
-    def is_following(self, user):
-        return (Relationship
-                .select()
-                .where(
-                    (Relationship.from_user == self) &
-                    (Relationship.to_user == user))
-                .exists())
-
-    def gravatar_url(self, size=80):
-        return 'http://www.gravatar.com/avatar/%s?d=identicon&s=%d' % \
-            (md5(self.email.strip().lower().encode('utf-8')).hexdigest(), size)
 
 
 # this model contains two foreign keys to user -- it essentially allows us to
@@ -163,12 +136,6 @@ def convertTuple(tup):
     st = ''.join(map(str, tup))
     return st
 
-# custom template filter -- flask allows you to define these functions and then
-# they are accessible in the template -- this one returns a boolean whether the
-# given user is following another user.
-@app.template_filter('is_following')
-def is_following(from_user, to_user):
-    return from_user.is_following(to_user)
 
 # Request handlers -- these two hooks are provided by flask and we will use them
 # to create and tear down a database connection on each request.
@@ -188,18 +155,15 @@ def homepage():
     # depending on whether the requesting user is logged in or not, show them
     # either the public timeline or their own private timeline
     if session.get('logged_in'):
-        return private_timeline()
+        return getparcel()
     else:
         return parcels()
 
-@app.route('/private/')
-def private_timeline():
-    # the private timeline exemplifies the use of a subquery -- we are asking for
-    # parcels where the person who created the parcel is someone the current
-    # user is following.  these parcels are then ordered newest-first.
+def getparcel():
+
     user = get_current_user()
     parcels = (Parcel
-                .select()
+               .select()
                 .where(Parcel.user << user.following())
                 .order_by(Parcel.pub_date.desc()))
     return object_list('private_parcels.html', parcels, 'parcel_list')
@@ -254,19 +218,8 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('homepage'))
 
-@app.route('/following/')
-@login_required
-def following():
-    user = get_current_user()
-    return object_list('user_following.html', user.following(), 'user_list')
-
-@app.route('/followers/')
-@login_required
-def followers():
-    user = get_current_user()
-    return object_list('user_followers.html', user.followers(), 'user_list')
-
 @app.route('/users/')
+@login_required
 def user_list():
     users = User.select().order_by(User.username)
     return object_list('user_list.html', users, 'user_list')
@@ -283,33 +236,6 @@ def user_detail(username):
     parcels = user.parcels.order_by(Parcel.pub_date.desc())
     return object_list('user_detail.html', parcels, 'parcel_list', user=user)
 
-@app.route('/users/<username>/follow/', methods=['POST'])
-@login_required
-def user_follow(username):
-    user = get_object_or_404(User, User.username == username)
-    try:
-        with database.atomic():
-            Relationship.create(
-                from_user=get_current_user(),
-                to_user=user)
-    except IntegrityError:
-        pass
-
-    flash('You are following %s' % user.username)
-    return redirect(url_for('user_detail', username=user.username))
-
-@app.route('/users/<username>/unfollow/', methods=['POST'])
-@login_required
-def user_unfollow(username):
-    user = get_object_or_404(User, User.username == username)
-    (Relationship
-     .delete()
-     .where(
-         (Relationship.from_user == get_current_user()) &
-         (Relationship.to_user == user))
-     .execute())
-    flash('You are no longer following %s' % user.username)
-    return redirect(url_for('user_detail', username=user.username))
 
 @app.route('/create/', methods=['GET', 'POST'])
 @login_required
