@@ -142,7 +142,7 @@ def deliverydetails():
         res = chatbot_response(request.form['message'])
         session['chatlog'].append("Bot: " + res)
 
-        flash('Parcel delivery info has been updated')
+        #flash('Parcel delivery info has been updated')
         return render_template('chatui.html')
         #return redirect(url_for('user_detail', username=user.username))
     else:

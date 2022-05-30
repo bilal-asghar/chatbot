@@ -118,7 +118,7 @@ def login_required(f):
 def object_list(template_name, qr, var_name='object_list', **kwargs):
     kwargs.update(
         page=int(request.args.get('page', 1)),
-        pages=qr.count() / 20 + 1)
+        pages=qr.count() / 4 + 1)
     kwargs[var_name] = qr.paginate(kwargs['page'])
     return render_template(template_name, **kwargs)
 
@@ -155,18 +155,10 @@ def homepage():
     # depending on whether the requesting user is logged in or not, show them
     # either the public timeline or their own private timeline
     if session.get('logged_in'):
-        return getparcel()
-    else:
         return parcels()
+    else:
+        return redirect(url_for('login'))
 
-def getparcel():
-
-    user = get_current_user()
-    parcels = (Parcel
-               .select()
-                .where(Parcel.user << user.following())
-                .order_by(Parcel.pub_date.desc()))
-    return object_list('private_parcels.html', parcels, 'parcel_list')
 
 @app.route('/parcels/')
 def parcels():
