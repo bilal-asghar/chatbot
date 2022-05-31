@@ -6,14 +6,13 @@ import numpy as np
 import urllib.request
 import requests
 import json
-from keras.models import load_model
-model = load_model('chatbot_model.h5')
 import json
 import random
-intents = json.loads(open('intents.json').read())
-words = pickle.load(open('words.pkl','rb'))
-classes = pickle.load(open('classes.pkl','rb'))
 
+
+
+def getDeliveryTime():
+    return "9 AM to 2PM"
 
 def getDeliveryDates():
     excluded = (6, 7)
@@ -76,8 +75,15 @@ def chatbot_response(msg):
             return 'Please enter valid office/house number'
 
 
-    return ""
 
+    if (session['isReceiver'] and session['schedulestep'] == 4):
+        session['schedulestep'] = 5
+        session['time'] = getDeliveryTime()
+        return 'Please select delivery time'
+    else:  # validation failed
+     return 'Please enter valid time'
+
+    return ""
 
 #Creating GUI with tkinter
 

@@ -8,22 +8,20 @@
  <form action="{{ url_for('deliverydetails') }}" method=post>
     <dl>
 <ul>
+
+
+
     {% if session['chatlog'] %}
     {% for note in session['chatlog'] %}
 
       {% if note == 'please select date' %}
-       {%for i in range(0, 5)%}
+       {% for i in range(0, 5)%}
 
        <li>{{i+1}}. {{session['dates'][i]}}</li>
       {% endfor %}
       {% endif %}
 
-    {% if note == 'please select time' %}
-       {%for i in range(0, 5)%}
 
-       <li>{{i+1}}. {{session['dates'][i]}}</li>
-      {% endfor %}
-      {% endif %}
 
 
     <li>{{ note }}</li>
