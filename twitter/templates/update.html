@@ -59,7 +59,7 @@ input[type=number], select, textarea {
          <div class="row">   {{ render_field(form.amount) }}  </div>
           <div class="row">  {{ render_field(form.destination_branch) }}  </div>
           <div class="row">  {{ render_field(form.is_received_at_destination) }}  </div>
-          <div class="row">  {{ render_field(form.is_delivered_to_receiever) }}  </div>
+          <div class="row" class="delivered">  {{ render_field(form.is_delivered_to_receiever) }}  </div>
         </dl>
         <p><input type=submit value=Submit>
     </form>

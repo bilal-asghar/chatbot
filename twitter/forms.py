@@ -15,6 +15,6 @@ class ParcelForm(Form):
     receiveraddress = StringField('Receiver Address', render_kw={'readonly': True})
     parcelweight = DecimalField('Weight', render_kw={'readonly': True})
     amount = DecimalField('Amount', render_kw={'readonly': True})
-    is_received_at_destination = BooleanField('Received at Destination')
+    is_received_at_destination= BooleanField = BooleanField('Received at Destination')
     is_delivered_to_receiever = BooleanField('Delivered to Receiver')
     destination_branch = SelectField('Destination Branch', choices=destination_branches, render_kw={'readonly': True})

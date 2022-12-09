@@ -6,6 +6,7 @@
   <div class=metanav>
   {% if not session.logged_in %}
     <a href="{{ url_for('login') }}">log in</a>
+     <a href="{{ url_for('join') }}">create user</a>
   {% else %}
     <a href="{{ url_for('join') }}">create user</a>
     <a href="{{ url_for('parcels') }}">Parcels</a>

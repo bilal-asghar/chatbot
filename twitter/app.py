@@ -1,6 +1,7 @@
 import datetime
 
-
+import os
+from twilio.rest import Client
 from flask import Flask
 from flask import g
 from flask import jsonify
@@ -12,6 +13,7 @@ from functools import wraps
 from hashlib import md5
 from peewee import *
 from forms import ParcelForm
+
 # config - aside from our database, the rest is for use by Flask
 DATABASE = 'tweepee.db'
 DEBUG = True
@@ -26,6 +28,7 @@ app.config.from_object(__name__)
 # persist information
 database = SqliteDatabase(DATABASE)
 
+
 # model definitions -- the standard "pattern" is to define a base model class
 # that specifies which database to use.  then, any subclasses will automatically
 # use the correct storage. for more information, see:
@@ -34,14 +37,13 @@ class BaseModel(Model):
     class Meta:
         database = database
 
+
 # the user model specifies its fields (or columns) declaratively, like django
 class User(BaseModel):
     username = CharField(unique=True)
     password = CharField()
     email = CharField()
     join_date = DateTimeField()
-
-
 
 
 # this model contains two foreign keys to user -- it essentially allows us to
@@ -77,6 +79,7 @@ class Parcel(BaseModel):
     destination_branch = IntegerField()
     is_received_at_destination = BitField()
     is_delivered_to_receiever = BitField()
+
     def tojson(self):
         return {"parcelnumber": self.parcelnumber,
                 "sendername": self.sendername,
@@ -88,6 +91,7 @@ def create_tables():
     with database:
         database.create_tables([User, Relationship, Parcel])
 
+
 # flask provides a "session" object, which allows us to store information across
 # requests (stored by default in a secure cookie).  this function allows us to
 # mark a user as being logged-in by setting some values in the session data:
@@ -97,10 +101,12 @@ def auth_user(user):
     session['username'] = user.username
     flash('You are logged in as %s' % (user.username))
 
+
 # get the user from the session
 def get_current_user():
     if session.get('logged_in'):
         return User.get(User.id == session['user_id'])
+
 
 # view decorator which indicates that the requesting user must be authenticated
 # before they can access the view.  it checks the session to see if they're
@@ -111,7 +117,9 @@ def login_required(f):
         if not session.get('logged_in'):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
+
     return inner
+
 
 # given a template and a SelectQuery instance, render a paginated list of
 # objects from the query inside the template
@@ -121,6 +129,7 @@ def object_list(template_name, qr, var_name='object_list', **kwargs):
         pages=qr.count() / 4 + 1)
     kwargs[var_name] = qr.paginate(kwargs['page'])
     return render_template(template_name, **kwargs)
+
 
 # retrieve a single object matching the specified query or 404 -- this uses the
 # shortcut "get" method on model, which retrieves a single object or raises a
@@ -132,6 +141,7 @@ def get_object_or_404(model, *expressions):
     except model.DoesNotExist:
         abort(404)
 
+
 def convertTuple(tup):
     st = ''.join(map(str, tup))
     return st
@@ -142,12 +152,14 @@ def convertTuple(tup):
 @app.before_request
 def before_request():
     g.db = database
-    g.db.connect(reuse_if_open = True)
+    g.db.connect(reuse_if_open=True)
+
 
 @app.after_request
 def after_request(response):
     g.db.close()
     return response
+
 
 # views -- these are the actual mappings of url to view function
 @app.route('/')
@@ -165,6 +177,7 @@ def parcels():
     # simply display all parcels, newest first
     parcels = Parcel.select().order_by(Parcel.pub_date.desc())
     return object_list('parcels.html', parcels, 'parcel_list')
+
 
 @app.route('/join/', methods=['GET', 'POST'])
 def join():
@@ -188,6 +201,7 @@ def join():
 
     return render_template('join.html')
 
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST' and request.form['username']:
@@ -204,17 +218,20 @@ def login():
 
     return render_template('login.html')
 
+
 @app.route('/logout/')
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('homepage'))
 
+
 @app.route('/users/')
 @login_required
 def user_list():
     users = User.select().order_by(User.username)
     return object_list('user_list.html', users, 'user_list')
+
 
 @app.route('/users/<username>/')
 def user_detail(username):
@@ -233,42 +250,71 @@ def user_detail(username):
 @login_required
 def create():
     user = get_current_user()
-    if request.method == 'POST' and  request.form['sendername'] and request.form['receivermobilenumber']:
+    if request.method == 'POST' and request.form['sendername'] and request.form['receivermobilenumber']:
         parcel = Parcel.create(
             user=user,
-            sendername = request.form['sendername'],
-            sendermobilenumber = request.form['sendermobilenumber'],
-            senderaddress = request.form['senderaddress'],
-            receivername = request.form['receivername'],
-            receivermobilenumber = request.form['receivermobilenumber'],
-            receiveraddress = request.form['receiveraddress'],
-            parcelweight = request.form['parcelweight'],
-            amount = request.form['amount'],
-            parcelnumber = request.form['parcelnumber'],
-            destination_branch = request.form['destination_branch'],
-            is_received_at_destination = False,
-            is_delivered_to_receiever = False,
+            sendername=request.form['sendername'],
+            sendermobilenumber=request.form['sendermobilenumber'],
+            senderaddress=request.form['senderaddress'],
+            receivername=request.form['receivername'],
+            receivermobilenumber=request.form['receivermobilenumber'],
+            receiveraddress=request.form['receiveraddress'],
+            parcelweight=request.form['parcelweight'],
+            amount=request.form['amount'],
+            parcelnumber=request.form['parcelnumber'],
+            destination_branch=request.form['destination_branch'],
+            is_received_at_destination=False,
+            is_delivered_to_receiever=False,
             pub_date=datetime.datetime.now())
         flash('Parcel info has been created')
         return redirect(url_for('parcels'))
 
     return render_template('create.html')
 
+
+# add check to send sms only once
 @app.route('/editparcel/<int:id>', methods=['GET', 'POST'])
 def editparcel(id):
-
     parcel = get_object_or_404(Parcel, Parcel.id == id)
     form = ParcelForm(formdata=request.form, obj=parcel)
     form.is_received_at_destination.checked = parcel.is_received_at_destination
     form.is_delivered_to_receiever.checked = parcel.is_delivered_to_receiever
     if request.method == 'POST':
+     is_checked = request.form.get('is_received_at_destination')
+     is_checked_delivered_to_receiever = request.form.get('is_delivered_to_receiever')
+     is_delivered_to_receiever = False
+     is_receieved_from_db = False
+     is_receieved = False
 
-        parcel.is_received_at_destination = request.form.get('is_received_at_destination',False)
-        parcel.is_delivered_to_receiever = request.form.get('is_delivered_to_receiever',False)
-        parcel.save()
-        return redirect(url_for('parcels', id=id))
+     if is_checked_delivered_to_receiever == 'Y':
+        is_delivered_to_receiever = True
+
+     if parcel.is_received_at_destination == 1:
+        is_receieved_from_db = True
+
+        print("is_checked="+is_checked)
+
+     if is_checked=="y":
+        is_receieved=True
+
+     send_sms(parcel.parcelnumber, parcel.receivermobilenumber)
+
+     if is_receieved and is_receieved_from_db is False:
+            print("message Sent")
+            print(request.form.get('is_received_at_destination', False))
+            send_sms(parcel.parcelnumber,parcel.receivermobilenumber)
+     else:
+            print("message not sent")
+
+
+     parcel.is_received_at_destination = is_receieved
+     parcel.is_delivered_to_receiever = is_delivered_to_receiever
+     parcel.save()
+
+     return redirect(url_for('parcels', id=id))
     else:
-        return render_template('update.html', form=form)
+     return render_template('update.html', form=form)
+
 
 @app.route('/parcels/<parcelid>/')
 def parcel_detail(parcelid):
@@ -278,9 +324,35 @@ def parcel_detail(parcelid):
 
     return jsonify(parcel.tojson())
 
+
 @app.context_processor
 def _inject_user():
     return {'current_user': get_current_user()}
+
+
+def send_sms(parcelnumber,phonenumber):
+    print("parcelnumber ="+parcelnumber )
+    print("phonenumber =" + phonenumber)
+    print("Your parcel is ready to delivered, click on link to update delivery details:\n"
+    + "http://127.0.0.1:5000/parcels/"+parcelnumber)
+    # code for sms send
+    # http://127.0.0.1:5000/parcels/674388/
+
+    account_sid = os.environ['account_sid'] = str("ACb01d3280d0cc41e0d7b2751d0e894193")
+    auth_token = os.environ['auth_token'] = str("339a4bc004b181c3a4db55e6838deafc")
+    print("sms sent")
+
+    # client = Client(account_sid, auth_token)
+
+    # message = client.messages.create(
+    #     body='Your parcel Received at destination!',
+    #     from_='+1 6086803526',
+    #     to='+92 330 3930398'
+    # )
+    # print(message.sid)
+
+
+
 
 # allow running from the command line
 if __name__ == '__main__':
