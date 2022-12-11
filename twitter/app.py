@@ -335,21 +335,20 @@ def send_sms(parcelnumber,phonenumber):
     print("phonenumber =" + phonenumber)
     print("Your parcel is ready to delivered, click on link to update delivery details:\n"
     + "http://127.0.0.1:5000/parcels/"+parcelnumber)
-    # code for sms send
-    # http://127.0.0.1:5000/parcels/674388/
+
+    body = "Your parcel is ready to delivered, click on link to update delivery details: \n" \
+    + "http://127.0.0.1:5000/parcels/" + str(parcelnumber)
 
     account_sid = os.environ['account_sid'] = str("ACb01d3280d0cc41e0d7b2751d0e894193")
     auth_token = os.environ['auth_token'] = str("339a4bc004b181c3a4db55e6838deafc")
     print("sms sent")
-
-    # client = Client(account_sid, auth_token)
-
-    # message = client.messages.create(
-    #     body='Your parcel Received at destination!',
-    #     from_='+1 6086803526',
-    #     to='+92 330 3930398'
-    # )
-    # print(message.sid)
+    client = Client(account_sid, auth_token)
+    message = client.messages.create(
+         body=body,
+         from_='+1 6086803526',
+         to='+923303930398'
+    )
+    print(message.sid)
 
 
 
