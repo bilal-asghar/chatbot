@@ -1,5 +1,5 @@
-<doctype html>
-<title>Update Parcel</title>
+<!DOCTYPE html>
+<html lang="en">
 <h2>Edit  Parcel</h2>
     <style>
         label {
@@ -38,8 +38,8 @@ input[type=number], select, textarea {
   display: table;
   clear: both;
 }
+</style>
 
-    </style>
 <div class="container">
 {% from "_formhelpers.html" import render_field %}
 
@@ -52,7 +52,7 @@ input[type=number], select, textarea {
           </div>
         <div class="row">    {{ render_field(form.senderaddress) }}  </div>
         <div class="row">    {{ render_field(form.receivername) }}  </div>
-        <div class="row">    {{ render_field(form.receivermobilenumber) }}  </div>
+        <div class="row mobile_num">    {{ render_field(form.receivermobilenumber) }}  </div>
 
          <div class="row">   {{ render_field(form.receiveraddress) }}  </div>
          <div class="row">   {{ render_field(form.parcelweight) }}  </div>

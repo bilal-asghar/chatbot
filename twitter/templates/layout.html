@@ -1,17 +1,57 @@
 <!doctype html>
 <title>Parcel Delivery System</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+ <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script>
+
+$(document).ready(function () {
+$(".mobile_num").on('input', function () {
+
+                var inputValPattren = /^\+92\ [0-9]{9}$/;
+                var inputVal = $("#mobile_num").val();
+
+                if (inputVal == "") {
+                    $("#result").html("**Can't be empty");
+
+                }
+
+                // else if (isNaN(inputVal)) {
+                //     $("#result").html("**Not a number");
+                // }
+
+                else if (inputVal.length != 13) {
+                    $("#result").html("**Must be of 13 digits");
+                }
+
+                else if (!inputValPattren.test(inputVal)) {
+                    $("#result").html("**Pattren does not match +92 xxxxxxxxx");
+
+                }
+
+                else {
+                    $("#result").html("correct");
+                    $("#result").css('color', 'green');
+
+                }
+
+            });
+
+
+        });
+   ]
+</script>
 <div class=page>
   <h1><a href="{{ url_for('homepage') }}">Parcel Delivery System</a></h1>
   <div class=metanav>
   {% if not session.logged_in %}
     <a href="{{ url_for('login') }}">log in</a>
-     <a href="{{ url_for('join') }}">create user</a>
+     <a href="{{ url_for('join') }}">Create user</a>
   {% else %}
-    <a href="{{ url_for('join') }}">create user</a>
+    <a href="{{ url_for('join') }}">Create User</a>
     <a href="{{ url_for('parcels') }}">Parcels</a>
-    <a href="{{ url_for('create') }}">create parcel</a>
-    <a href="{{ url_for('logout') }}">log out</a>
+    <a href="{{ url_for('create') }}">Create Parcel</a>
+    <a href="{{ url_for('logout') }}">Log Out</a>
   {% endif %}
   </div>
   {% for message in get_flashed_messages() %}

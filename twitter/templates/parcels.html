@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
+
+
   <h2>Parcels</h2>
 
 <table id="parcels">
@@ -20,7 +22,6 @@
     </tr>
     </thead>
     <tbody>
-
 
     {% for parcel in parcel_list %}
       {% include "includes/parcel.html" %}

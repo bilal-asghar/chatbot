@@ -3,39 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <title>Chatbot</title>
+    <style>
+        ul {
+  list-style: square outside none;
+}
+body {
+display: flex;
+    align-items: center;
+    width: 50%;
+    padding-left: 20%;
+    margin: 2%;
+    padding-right: 20%;
+}
+.button {
+  display: inline-block;
+  border-radius: 2px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 18px;
+  padding: 10px;
+  width: 100px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+textarea {
+  width: 100%;
+  height: 100px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+}
+    </style>
 </head>
 <body>
  <form action="{{ url_for('deliverydetails') }}" method=post>
     <dl>
 <ul>
-
-
-
     {% if session['chatlog'] %}
-    {% for note in session['chatlog'] %}
+      {% for note in session['chatlog'] %}
 
-      {% if note == 'please select date' %}
-       {% for i in range(0, 5)%}
+        {% if note == 'please select date' %}
+          <li>Bot: Please select delivery date</li>
+         {% for i in range(0, 5)%}
+          <li>{{i+1}}. {{session['dates'][i]}}</li>
+         {% endfor %}
+        {% endif %}
 
-       <li>{{i+1}}. {{session['dates'][i]}}</li>
+       {% if note == 'please select time' %}
+         <li>Bot: Please select delivery time</li>
+         {% for i in range(0, 3)%}
+           <li>{{i+1}}. {{session['time'][i]}}</li>
+         {% endfor %}
+       {% endif %}
+
+       {% if note != 'please select date' and note != 'please select time' and  note != 'Bot: Please select delivery date' and note != 'Bot: Please select delivery time' %}
+         <li>{{ note }}</li>
+       {% endif %}
+
       {% endfor %}
-      {% endif %}
-
-
-
-
-    <li>{{ note }}</li>
-    {% endfor %}
-
-
-
     {% endif %}
 </ul>
 
       <dt>Reply:</dt>
       <dd><textarea name="message" required></textarea></dd>
 
-      <dd><input type="submit" value="send" /></dd>
+      <dd><input type="submit" value="send" class="button" /></dd>
     </dl>
   </form>
 </body>

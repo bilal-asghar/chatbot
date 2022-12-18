@@ -12,7 +12,12 @@ import random
 
 
 def getDeliveryTime():
-    return "9 AM to 2PM"
+    time = []
+    time.append("9AM to 12PM")
+    time.append("12PM to 3PM")
+    time.append("3PM to 5PM")
+    session['chatlog'].append('please select time')
+    return time
 
 def getDeliveryDates():
     excluded = (6, 7)
@@ -33,7 +38,7 @@ def getDeliveryDates():
 def chatbot_response(msg):
 
     if(len(msg) == 6 and  session['schedulestep'] == 0):
-        url = 'http://127.0.0.1:8000/parcels/653212'
+        url = 'http://127.0.0.1:8000/parcels/' + msg
         r = requests.get(url)
         print(json.loads(r.content))
         data = json.loads(r.content)
@@ -80,8 +85,8 @@ def chatbot_response(msg):
         session['schedulestep'] = 5
         session['time'] = getDeliveryTime()
         return 'Please select delivery time'
-    else:  # validation failed
-     return 'Please enter valid time'
+    else:
+     return 'Thank you!'
 
     return ""
 
@@ -127,9 +132,10 @@ def parcel_detail(parcelid):
     session['isReceiver'] = True
     session['parcelNumber'] = parcelid
     session['schedulestep'] = 0
-    chatlog = ["Bot: your parcel is ready to deliver"]
+    chatlog = ["Bot: your parcel is ready to deliver - Parcel Number: " + data['parcelnumber']]
     session['chatlog'] = chatlog
     session['schedulestep'] = 1
+    session['chatlog'].append("Bot:Sender - " + data['sendername'] + " Sender Mobile Number - " + data['sendermobilenumber'] )
     session['chatlog'].append("Bot: you will pickup from branch or you need delivery?")
     print("sender name: ", data['sendername'])
     return render_template('chatui.html')
