@@ -1,0 +1,110 @@
+
+<html lang="en">
+<h2>Parcel Tracking Info </h2>
+    <style>
+        label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+
+body {
+	display: flex;
+	flex-wrap: wrap;
+    min-height: 100vh;
+    background-color: #080808;
+}
+
+.shape-outer {
+    display: flex;
+    flex-shrink: 0;
+    height: calc(100px + 4vw);
+    width: calc(300px + 4vw);
+    margin: 10px;
+    background-image: linear-gradient(to bottom right, #ff3cac, #562b7c, #2b86c5);
+}
+
+.pentagon {
+    -webkit-clip-path: polygon(50% 0%, 100% 40%, 82% 100%, 18% 100%, 0% 40%);
+    		clip-path: polygon(50% 0%, 100% 40%, 82% 100%, 18% 100%, 0% 40%);
+}
+
+.hexagon {
+    -webkit-clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    		clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+
+
+
+.sign-right {
+    -webkit-clip-path: polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%);
+    		clip-path: polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%);
+}
+
+
+
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+   float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+
+input[type=number], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+   float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<div class="container">
+<form method=post>
+
+
+    {% if session['TrackInfo-Sender'] %}
+
+
+    <div class="row shape-outer sign-right">
+        <div style="margin-top:20%">
+        <div class="col-20">Sender Info:</div>
+        <div class="col-80">{{session['TrackInfo-Sender']}}</div>
+        </div>
+    </div>
+    <br/>
+    <div class="row shape-outer sign-right">
+        <div style="margin-top:20%">
+        <div class="col-20">Reciever Info:</div>
+        <div class="col-80">{{session['TrackInfo-Reciever']}}</div>
+        </div>
+    </div>
+    <br/>
+    <div class="row shape-outer sign-right">
+        <div style="margin-top:20%">
+        <div class="col-20">Parcel Location:</div>
+        <div class="col-80">{{session['TrackInfo-Location']}}</div>
+        </div>
+    </div>
+
+    {% endif %}
+
+
+    </form>
+</div>

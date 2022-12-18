@@ -13,29 +13,28 @@
     <script>
 
     $(document).ready(function () {
-<!--    alert("hello");-->
-            // ---------------------input text field-------------------------//
+
+ $('[type="submit"]').on('click', function () {
+
+    // this adds 'required' class to all the required inputs under the same <form> as the submit button
+    $(this)
+        .closest('form')
+        .find('[required]')
+        .addClass('required');
+});
 
             $(".mobile_num").on('input', function () {
 
                 var inputValPattern = /^\+92[0-9]{8}$/;
                 var inputVal = $(".mobile_num").val();
 
-                if (inputVal == "") {
-                    $(".result").html("**Can't be empty");
 
-                }
-
-                // else if (isNaN(inputVal)) {
-                //     $(".result").html("**Not a number");
-                // }
-
-                else if (inputVal.length != 12) {
-                    $(".result").html("**Must be of 12 digits");
+                 if (inputVal.length != 13) {
+                    $(".result").html("**Must be of 13 digits");
                 }
 
                 else if (!inputValPattern.test(inputVal)) {
-                    $(".result").html("**Pattern does not match +92012345678");
+                    $(".result").html("**Pattern does not match +923451111111");
 
                 }
 

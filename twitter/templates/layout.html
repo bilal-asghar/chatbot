@@ -6,41 +6,15 @@
 <script>
 
 $(document).ready(function () {
-$(".mobile_num").on('input', function () {
-
-                var inputValPattren = /^\+92\ [0-9]{9}$/;
-                var inputVal = $("#mobile_num").val();
-
-                if (inputVal == "") {
-                    $("#result").html("**Can't be empty");
-
-                }
-
-                // else if (isNaN(inputVal)) {
-                //     $("#result").html("**Not a number");
-                // }
-
-                else if (inputVal.length != 13) {
-                    $("#result").html("**Must be of 13 digits");
-                }
-
-                else if (!inputValPattren.test(inputVal)) {
-                    $("#result").html("**Pattren does not match +92 xxxxxxxxx");
-
-                }
-
-                else {
-                    $("#result").html("correct");
-                    $("#result").css('color', 'green');
-
-                }
-
-            });
 
 
         });
-   ]
+
 </script>
+
+<style>
+
+</style>
 <div class=page>
   <h1><a href="{{ url_for('homepage') }}">Parcel Delivery System</a></h1>
   <div class=metanav>

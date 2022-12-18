@@ -272,7 +272,7 @@ def create():
     return render_template('create.html')
 
 
-# add check to send sms only once
+
 @app.route('/editparcel/<int:id>', methods=['GET', 'POST'])
 def editparcel(id):
     parcel = get_object_or_404(Parcel, Parcel.id == id)
@@ -314,6 +314,24 @@ def editparcel(id):
      return redirect(url_for('parcels', id=id))
     else:
      return render_template('update.html', form=form)
+
+
+@app.route('/parceltracking/<int:id>', methods=['GET'])
+def parceltracking(id):
+    parcel = get_object_or_404(Parcel, Parcel.parcelnumber == id)
+
+    session['TrackInfo-Sender'] ="Name: " + parcel.sendername + " Mobile Number: " + parcel.sendermobilenumber
+    session['TrackInfo-Reciever'] = "Reciever: " + parcel.receivername + " Sender Mobile Number: " + parcel.receivermobilenumber
+
+    if parcel.is_delivered_to_receiever:
+        session['TrackInfo-Location'] = "Parcel is at delivered to Reciever"
+        return render_template('TrackingInfo.html')
+    if parcel.is_received_at_destination:
+          session['TrackInfo-Location'] = "Parcel is at destination Branch"
+    else:
+          session['TrackInfo-Location'] = "Parcel is on the way to destination Branch"
+    return render_template('TrackingInfo.html')
+
 
 
 @app.route('/parcels/<parcelid>/')
