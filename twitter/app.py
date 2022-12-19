@@ -286,7 +286,7 @@ def editparcel(id):
      is_receieved_from_db = False
      is_receieved = False
 
-     if is_checked_delivered_to_receiever == 'Y':
+     if is_checked_delivered_to_receiever == 'y':
         is_delivered_to_receiever = True
 
      if parcel.is_received_at_destination == 1:
@@ -304,7 +304,7 @@ def editparcel(id):
             print(request.form.get('is_received_at_destination', False))
             send_sms(parcel.parcelnumber,parcel.receivermobilenumber)
      else:
-            print("message not sent")
+            print("\message not sent")
 
 
      parcel.is_received_at_destination = is_receieved
@@ -349,7 +349,7 @@ def _inject_user():
 
 
 def send_sms(parcelnumber,phonenumber):
-    print("parcelnumber ="+parcelnumber )
+    print("parcelnumber ="+parcelnumber)
     print("phonenumber =" + phonenumber)
     print("Your parcel is ready to delivered, click on link to update delivery details:\n"
     + "http://127.0.0.1:5000/parcels/"+parcelnumber)
@@ -357,13 +357,13 @@ def send_sms(parcelnumber,phonenumber):
     body = "Your parcel is ready to delivered, click on link to update delivery details: \n" \
     + "http://127.0.0.1:5000/parcels/" + str(parcelnumber)
 
-    account_sid = os.environ['account_sid'] = str("ACb01d3280d0cc41e0d7b2751d0e894193")
-    auth_token = os.environ['auth_token'] = str("339a4bc004b181c3a4db55e6838deafc")
+    account_sid = os.environ['account_sid'] = str("AC98670cb79a35b1d1b5f23edad2f5eb67")
+    auth_token = os.environ['auth_token'] = str("be3b5cd45ff5ba975c2008734ce9dcd2")
     print("sms sent")
     client = Client(account_sid, auth_token)
     message = client.messages.create(
          body=body,
-         from_='+1 6086803526',
+         from_='+14092543457',
          to='+923303930398'
     )
     print(message.sid)
